@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  pull-requests: write
       
 jobs:
   publish:
@@ -33,5 +34,14 @@ jobs:
       - name: Comment PR
         uses: mshick/add-pr-comment@v2
         with:
+          message-id: cloudflare-deploy
           message: |
             🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}
+            
+            |  Name | Link |
+            |---------------------------------|------------------------|
+            |<span aria-hidden="true">🔨</span> Latest commit | ${{ github.sha }} |
+            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
+            |<span aria-hidden="true">😎</span> Deploy Preview Url | [${{ steps.cloudflare.outputs.url }}](${{ steps.cloudflare.outputs.url }}) |
+            |<span aria-hidden="true">🌳</span> Environment | ${{ steps.cloudflare.outputs.environment }} |
+            ---
