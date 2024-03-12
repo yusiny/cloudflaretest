@@ -29,3 +29,9 @@ jobs:
           projectName: cloudflaretest
           directory: build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}
