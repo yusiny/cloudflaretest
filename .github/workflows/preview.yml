@@ -24,6 +24,7 @@ jobs:
 
             - name: Publish to Cloudflare Pages
               uses: cloudflare/pages-action@v1
+              id: cloudflare
               with:
                   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
                   accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -36,7 +37,7 @@ jobs:
               with:
                   message-id: cloudflare-deploy
                   message: |
-                      🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}
+                      🚀 This branch can be previewed at ${{ steps.cloudflare.outputs.url }}
 
                       |  Name | Link |
                       |---------------------------------|------------------------|
