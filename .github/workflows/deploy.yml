@@ -2,13 +2,14 @@ name: GitHub Actions Cloudflare Pages Deployment
 on:
     push:
         branches: [main]
-
+        
+permissions:
+  contents: read
+  deployments: write
+      
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     name: Publish to Cloudflare Pages
     steps:
       - name: Checkout
@@ -18,10 +19,8 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: YOUR_ACCOUNT_ID
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: cloudflaretest
-          directory: build
+          directory: public
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          workingDirectory: my-site
-          wranglerVersion: '3'
+
