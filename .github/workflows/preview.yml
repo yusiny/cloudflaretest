@@ -1,33 +1,48 @@
 name: GitHub Actions Cloudflare Pages Preview
 on:
-  pull_request:
-    types:
-      - opened
-      
-    branches: [develop]
+    pull_request:
+        types:
+            - opened
 
-        
+        branches: [develop]
+
 permissions:
-  contents: read
-  deployments: write
-      
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    name: Publish to Cloudflare Pages
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    contents: read
+    deployments: write
 
-      - name: Build
-        run: yarn install && yarn build
-        
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: cloudflaretest
-          directory: build
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: develop
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+        name: Publish to Cloudflare Pages
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Build
+              run: yarn install && yarn build
+
+            - name: Publish to Cloudflare Pages
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  projectName: cloudflaretest
+                  directory: build
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Comment PR
+              uses: mshick/add-pr-comment@v2
+              with:
+                  message-id: cloudflare-deploy
+                  message: |
+                      🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}
+
+                      |  Name | Link |
+                      |---------------------------------|------------------------|
+                      |<span aria-hidden="true">🔨</span> Latest commit | ${{ github.sha }} |
+                      |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
+                      |<span aria-hidden="true">😎</span> Deploy Preview Url | [${{ steps.cloudflare.outputs.url }}](${{ steps.cloudflare.outputs.url }}) |
+                      |<span aria-hidden="true">🌳</span> Environment | ${{ steps.cloudflare.outputs.environment }} |
+                      ---
